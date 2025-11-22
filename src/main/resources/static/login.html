@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+    .box {
+      width: 300px;
+    }
+    #msg {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<h2>로그인</h2>
+
+<div class="box">
+  <label>이름:</label><br>
+  <input type="text" id="name"><br><br>
+
+  <label>비밀번호:</label><br>
+  <input type="password" id="passwd"><br><br>
+
+  <button onclick="doLogin()">로그인</button>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+  function doLogin() {
+    const name = document.getElementById("name").value;
+    const passwd = document.getElementById("passwd").value;
+
+    fetch("/user/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        passwd: passwd
+      })
+    })
+            .then(res => res.json())
+            .then(success => {
+              if (success === true) {
+                alert("로그인 성공!");
+                window.location.href = "/showList.html";
+              } else {
+                document.getElementById("msg").textContent = "로그인 실패! 이름 또는 비밀번호를 확인하세요.";
+              }
+            })
+            .catch(err => {
+              console.error("에러:", err);
+              document.getElementById("msg").textContent = "서버 오류 발생!";
+            });
+  }
+</script>
+
+</body>
+</html>

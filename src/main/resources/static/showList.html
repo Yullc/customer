@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>고객 리스트</title>
+</head>
+<body>
+
+<h2>고객 리스트</h2>
+
+<table border="1" id="customer-table">
+    <thead>
+    <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Birth</th>
+        <th>Tel</th>
+        <th>Address</th>
+        <th>Company</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCustomers();
+    });
+
+    function loadCustomers() {
+        fetch("/user/customers")
+            .then(res => res.json())
+            .then(customers => {
+                const tbody = document.querySelector("#customer-table tbody");
+                tbody.innerHTML = "";
+
+                customers.forEach(c => {
+                    const row = `
+                        <tr>
+                            <td>${c.code}</td>
+                            <td>${c.name}</td>
+                            <td>${c.birth}</td>
+                            <td>${c.tel}</td>
+                            <td>${c.address}</td>
+                            <td>${c.company}</td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML("beforeend", row);
+                });
+            })
+            .catch(err => console.error("에러 발생:", err));
+    }
+</script>
+
+</body>
+</html>

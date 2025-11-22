@@ -9,4 +9,11 @@
         SELECT * FROM customer;
     </select>
 
+    <select id="doLogin" resultType="com.example.customer.vo.Admin">
+        SELECT * FROM admin
+        WHERE name = #{name}
+        AND passwd = #{passwd}
+        LIMIT 1;
+    </select>
+
 </mapper>
