@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>보험 계약 관리</title>
+</head>
+<body>
+
+<h2>보험 계약 관리</h2>
+
+<label>고객명:</label>
+<select id="customerSelect" onchange="loadCustomerInfo()"></select><br><br>
+
+<label>고객코드</label><br>
+<input id="code" readonly><br><br>
+
+<label>생년월일</label><br>
+<input id="birth" readonly><br><br>
+
+<label>연락처</label><br>
+<input id="tel" readonly><br><br>
+
+<hr>
+
+<label>보험상품:</label>
+<select id="productSelect"></select><br><br>
+
+<label>가입금액:</label><br>
+<input type="number" id="regPrice"><br><br>
+
+<label>월 보험료:</label><br>
+<input type="number" id="monthPrice"><br><br>
+
+<label>담당자:</label>
+<select id="adminSelect"></select><br><br>
+
+<button onclick="addContract()">가입</button>
+
+<hr>
+
+<h3>고객 보험 계약현황</h3>
+
+<table border="1" id="contract-table">
+    <thead>
+    <tr>
+        <th>상품명</th>
+        <th>가입금액</th>
+        <th>월보험료</th>
+        <th>담당자</th>
+        <th>가입일</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    let currentCustomerCode = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCustomers();
+        loadProducts();
+        loadAdmins();
+    });
+
+    function loadCustomers() {
+        fetch("/contract/customers")
+            .then(res => res.json())
+            .then(list => {
+                const customerSelect = document.getElementById("customerSelect");
+                customerSelect.innerHTML = "";
+                list.forEach(name => {
+                    customerSelect.innerHTML += `<option>${name}</option>`;
+                });
+
+                loadCustomerInfo();
+            });
+    }
+
+    function loadCustomerInfo() {
+        const name = document.getElementById("customerSelect").value;
+
+        fetch("/contract/customerInfo?name=" + name)
+            .then(res => res.json())
+            .then(c => {
+                document.getElementById("code").value = c.code;
+                document.getElementById("birth").value = c.birth;
+                document.getElementById("tel").value = c.tel;
+
+                currentCustomerCode = c.code;
+
+                loadContractList();
+            });
+    }
+
+    function loadProducts() {
+        fetch("/contract/products")
+            .then(res => res.json())
+            .then(list => {
+                const productSelect = document.getElementById("productSelect");
+                productSelect.innerHTML = "";
+                list.forEach(p => {
+                    productSelect.innerHTML += `<option>${p}</option>`;
+                });
+            });
+    }
+
+    function loadAdmins() {
+        fetch("/contract/admins")
+            .then(res => res.json())
+            .then(list => {
+                const adminSelect = document.getElementById("adminSelect");
+                adminSelect.innerHTML = "";
+                list.forEach(a => {
+                    adminSelect.innerHTML += `<option>${a}</option>`;
+                });
+            });
+    }
+
+    function loadContractList() {
+        fetch("/contract/list?customerCode=" + currentCustomerCode)
+            .then(res => res.json())
+            .then(list => {
+                const tbody = document.querySelector("#contract-table tbody");
+                tbody.innerHTML = "";
+
+                list.forEach(c => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${c.contractName}</td>
+                            <td>${c.regPrice}</td>
+                            <td>${c.monthPrice}</td>
+                            <td>${c.adminName}</td>
+                            <td>${c.regDate}</td>
+
+                            <td>
+                                <button onclick='deleteContract(${JSON.stringify(c)})'>
+                                    삭제
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function addContract() {
+        const contract = {
+            customerCode: currentCustomerCode,
+            contractName: document.getElementById("productSelect").value,
+            regPrice: document.getElementById("regPrice").value,
+            monthPrice: document.getElementById("monthPrice").value,
+            adminName: document.getElementById("adminSelect").value
+        };
+
+        fetch("/contract/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(contract)
+        })
+            .then(res => res.json())
+            .then(success => {
+                if (success) {
+                    alert("가입 완료!");
+                    loadContractList();
+                } else {
+                    alert("가입 실패!");
+                }
+            });
+    }
+
+    function deleteContract(c) {
+
+        if (!confirm("삭제하시겠습니까?")) return;
+
+        const params = new URLSearchParams();
+        params.append("customerCode", c.customerCode);
+        params.append("contractName", c.contractName);
+        params.append("regDate", c.regDate.substring(0, 10));
+
+        fetch("/contract/delete?" + params.toString(), {
+            method: "DELETE"
+        })
+            .then(res => res.json())
+            .then(success => {
+                if (success) {
+                    alert("삭제되었습니다.");
+                    loadContractList();
+                } else {
+                    alert("삭제 실패");
+                }
+            });
+    }
+</script>
+
+</body>
+</html>

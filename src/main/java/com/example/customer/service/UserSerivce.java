@@ -16,9 +16,6 @@ public class UserSerivce {
     @Autowired
     private UserRepository userRepository;
 
-//    public List<Customer> getCustomers(String code, String name, Date birth, String tel, String address, String company){
-//        return userRepository.getCustomers(code, name, birth, tel, address, company);
-//    }
 
     public List<Customer> getCustomers(String code) {
         return userRepository.getCustomers(code);
@@ -26,5 +23,21 @@ public class UserSerivce {
 
     public Admin doLogin(String name, String passwd) {
         return userRepository.doLogin(name, passwd);
+    }
+
+    public int register(Customer customer) {
+        return userRepository.register(customer);
+    }
+
+    public List<Customer> searchCustomersByName(String name) {
+        return userRepository.searchCustomersByName(name);
+    }
+
+    public int updateCustomer(Customer customer) {
+        return userRepository.updateCustomer(customer);
+    }
+
+    public int deleteCustomer(String code) {
+        return userRepository.deleteCustomer(code);
     }
 }

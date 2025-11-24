@@ -16,4 +16,30 @@
         LIMIT 1;
     </select>
 
+    <insert id="register">
+        INSERT INTO customer
+            (code, name, birth, tel, address, company)
+        VALUES
+            (#{code}, #{name}, #{birth}, #{tel}, #{address}, #{company});
+    </insert>
+
+    <select id="searchCustomersByName" resultType="com.example.customer.vo.Customer">
+        SELECT *
+        FROM customer
+        WHERE name LIKE CONCAT('%', #{name}, '%');
+    </select>
+
+    <update id="updateCustomer">
+        UPDATE customer
+        SET birth = #{birth},
+            tel = #{tel},
+            address = #{address},
+            company = #{company}
+        WHERE code = #{code}
+    </update>
+
+    <delete id="deleteCustomer">
+        DELETE FROM customer WHERE code = #{code}
+    </delete>
+
 </mapper>

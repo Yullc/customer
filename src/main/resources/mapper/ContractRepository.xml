@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.customer.repository.ContractRepository">
+
+    <select id="getAllCustomerNames" resultType="String">
+        SELECT name FROM customer;
+    </select>
+
+    <select id="getCustomerByName" parameterType="String" resultType="com.example.customer.vo.Customer">
+        SELECT code, name, birth, tel, address, company
+        FROM customer
+        WHERE name = #{name}
+        LIMIT 1;
+    </select>
+
+    <select id="getAllProducts" resultType="String">
+        SELECT DISTINCT contractName FROM contract;
+    </select>
+
+    <select id="getAllAdmins" resultType="String">
+        SELECT name FROM admin;
+    </select>
+
+    <select id="getContractsByCustomer" resultType="com.example.customer.vo.Contract">
+        SELECT customerCode, contractName, regPrice, regDate, monthPrice, adminName
+        FROM contract
+        WHERE customerCode = #{customerCode}
+        ORDER BY regDate DESC;
+    </select>
+
+    <insert id="insertContract" parameterType="com.example.customer.vo.Contract">
+        INSERT INTO contract (customerCode, contractName, regPrice, regDate, monthPrice, adminName)
+        VALUES (#{customerCode}, #{contractName}, #{regPrice}, NOW(), #{monthPrice}, #{adminName});
+    </insert>
+
+    <delete id="deleteContract">
+        DELETE FROM contract
+        WHERE customerCode = #{customerCode}
+          AND contractName = #{contractName}
+        limit 1;
+    </delete>
+
+</mapper>

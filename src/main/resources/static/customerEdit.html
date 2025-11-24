@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>고객 수정</title>
+</head>
+<body>
+
+<h2>고객 수정</h2>
+
+<div>
+    <label>고객코드</label><br>
+    <input id="code" readonly><br><br>
+
+    <label>고객명</label><br>
+    <input id="name" readonly><br><br>
+
+    <label>생년월일</label><br>
+    <input id="birth"><br><br>
+
+    <label>전화번호</label><br>
+    <input id="tel"><br><br>
+
+    <label>주소</label><br>
+    <input id="address"><br><br>
+
+    <label>회사</label><br>
+    <input id="company"><br><br>
+
+    <button onclick="updateCustomer()">수정</button>
+    <button onclick="window.history.back()">취소</button>
+
+    <p id="msg"></p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+
+        fetch(`/user/customers?code=${code}`)
+            .then(res => res.json())
+            .then(list => {
+                const c = list[0];
+
+                document.getElementById("code").value = c.code;
+                document.getElementById("name").value = c.name;
+                document.getElementById("birth").value = c.birth;
+                document.getElementById("tel").value = c.tel;
+                document.getElementById("address").value = c.address;
+                document.getElementById("company").value = c.company;
+            });
+    });
+
+    function updateCustomer() {
+        const customer = {
+            code: document.getElementById("code").value,
+            birth: document.getElementById("birth").value,
+            tel: document.getElementById("tel").value,
+            address: document.getElementById("address").value,
+            company: document.getElementById("company").value
+        };
+
+        fetch("/user/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(customer)
+        })
+            .then(res => res.json())
+            .then(success => {
+                if (success) {
+                    alert("고객정보 수정 완료!");
+                    window.history.back();
+                } else {
+                    alert("다시 시도하세요.");
+                }
+            });
+    }
+</script>
+
+</body>
+</html>

@@ -16,7 +16,14 @@ public class UserController {
     private UserSerivce userService;
 
     @GetMapping("/customers")
-    public List<Customer> getCustomers(@RequestParam(required = false) String code) {
+    @ResponseBody
+    public List<Customer> getCustomers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String code
+    ) {
+        if (name != null && !name.isBlank()) {
+            return userService.searchCustomersByName(name);
+        }
         return userService.getCustomers(code);
     }
 
@@ -34,4 +41,31 @@ public class UserController {
             return false;
         }
     }
+    @PostMapping("/register")
+    @ResponseBody
+    public boolean registerUser(@RequestBody Customer customer) {
+
+        if (customer.getName() == null || customer.getBirth() == null || customer.getTel() == null){
+            System.out.println("필수항목을 입력 해 주세요.");
+            return false;
+        }
+        int rows = userService.register(customer);
+
+        return rows > 0;
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public boolean updateCustomer(@RequestBody Customer customer) {
+        int result = userService.updateCustomer(customer);
+        return result > 0;
+    }
+
+    @DeleteMapping("/delete")
+    @ResponseBody
+    public boolean deleteCustomer(@RequestParam String code) {
+        return userService.deleteCustomer(code) > 0;
+    }
+
+
 }

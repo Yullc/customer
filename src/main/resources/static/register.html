@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>고객 등록</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="w-[500px] mx-auto mt-10 bg-white shadow-lg rounded p-6">
+  <h2 class="text-xl font-bold mb-4">고객 등록</h2>
+
+  <div class="flex flex-col gap-3">
+
+    <input class="border p-2 bg-gray-100" id="code" placeholder="고객코드 (자동 생성)" readonly>
+
+    <input class="border p-2" id="birth" placeholder="생년월일 (yyyy-mm-dd)"
+           onkeydown="if(event.key==='Enter') generateCode()">
+
+    <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            onclick="generateCode()">
+      고객코드 생성
+    </button>
+
+    <input class="border p-2" id="name" placeholder="이름">
+    <input class="border p-2" id="tel" placeholder="전화번호">
+    <input class="border p-2" id="address" placeholder="주소">
+    <input class="border p-2" id="company" placeholder="회사">
+
+    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onclick="registerUser()">
+      등록하기
+    </button>
+
+    <p id="msg" class="text-red-500 font-bold"></p>
+  </div>
+</div>
+
+<script>
+
+  function generateCode() {
+    const birth = document.getElementById("birth").value;
+
+    if (!birth || birth.length !== 10) {
+      alert("생년월일을 YYYY-MM-DD 형식으로 입력하세요.");
+      return;
+    }
+
+    const [year, month, day] = birth.split("-").map(Number);
+
+    const sum = year + month + day;
+
+    const currentYear = new Date().getFullYear();
+    const yy = String(currentYear).slice(2);
+
+    const code = `S${yy}${sum}`;
+    document.getElementById("code").value = code;
+  }
+
+  function registerUser() {
+
+    const customer = {
+      code: document.getElementById("code").value,
+      name: document.getElementById("name").value,
+      birth: document.getElementById("birth").value,
+      tel: document.getElementById("tel").value,
+      address: document.getElementById("address").value,
+      company: document.getElementById("company").value
+    };
+
+    if (!customer.code) {
+      document.getElementById("msg").textContent = "먼저 고객코드를 생성하세요!";
+      return;
+    }
+
+    fetch("/user/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer)
+    })
+            .then(res => res.text())
+            .then(result => {
+              console.log("서버 응답:", result);
+
+              if (result === "true") {
+                document.getElementById("msg").textContent = "등록 성공!";
+              } else {
+                document.getElementById("msg").textContent = "등록 실패!";
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              document.getElementById("msg").textContent = "서버 오류 발생";
+            });
+  }
+</script>
+
+</body>
+</html>
