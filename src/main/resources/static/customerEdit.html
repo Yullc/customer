@@ -1,37 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>고객 수정</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f4f6;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .edit-card {
+            width: 450px;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-update {
+            background: #4f7dcf;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: #3b6abc;
+        }
+
+        .btn-cancel {
+            background: #bbbbbb;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #a0a0a0;
+        }
+
+        #msg {
+            margin-top: 10px;
+            color: red;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>고객 수정</h2>
+<div class="edit-card">
+    <h2>고객 수정</h2>
 
-<div>
-    <label>고객코드</label><br>
-    <input id="code" readonly><br><br>
+    <label>고객코드</label>
+    <input id="code" readonly>
 
-    <label>고객명</label><br>
-    <input id="name" readonly><br><br>
+    <label>고객명</label>
+    <input id="name" readonly>
 
-    <label>생년월일</label><br>
-    <input id="birth"><br><br>
+    <label>생년월일</label>
+    <input id="birth">
 
-    <label>전화번호</label><br>
-    <input id="tel"><br><br>
+    <label>전화번호</label>
+    <input id="tel">
 
-    <label>주소</label><br>
-    <input id="address"><br><br>
+    <label>주소</label>
+    <input id="address">
 
-    <label>회사</label><br>
-    <input id="company"><br><br>
+    <label>회사</label>
+    <input id="company">
 
-    <button onclick="updateCustomer()">수정</button>
-    <button onclick="window.history.back()">취소</button>
+    <div style="display:flex; justify-content: space-between; margin-top: 10px;">
+        <button class="btn-update" onclick="updateCustomer()">수정</button>
+        <button class="btn-cancel" onclick="window.history.back()">취소</button>
+    </div>
 
     <p id="msg"></p>
 </div>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -69,7 +144,7 @@
             .then(res => res.json())
             .then(success => {
                 if (success) {
-                    alert("고객정보 수정 완료!");
+                    alert("고객정보 수정 완료");
                     window.history.back();
                 } else {
                     alert("다시 시도하세요.");

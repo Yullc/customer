@@ -3,56 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <title>보험 계약 관리</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 800px;
+            background: white;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 6px;
+            margin: 5px 0 15px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin-top: 5px;
+            border: none;
+            background: #4b89dc;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #3a6fb3;
+        }
+
+        #contract-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        #contract-table th, #contract-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #contract-table th {
+            background: #e8e8e8;
+        }
+
+        hr {
+            margin: 25px 0;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>보험 계약 관리</h2>
+<div class="container">
 
-<label>고객명:</label>
-<select id="customerSelect" onchange="loadCustomerInfo()"></select><br><br>
+    <h2>보험 계약 관리</h2>
 
-<label>고객코드</label><br>
-<input id="code" readonly><br><br>
+    <label>고객명:</label>
+    <select id="customerSelect" onchange="loadCustomerInfo()"></select>
 
-<label>생년월일</label><br>
-<input id="birth" readonly><br><br>
+    <label>고객코드</label>
+    <input id="code" readonly>
 
-<label>연락처</label><br>
-<input id="tel" readonly><br><br>
+    <label>생년월일</label>
+    <input id="birth" readonly>
 
-<hr>
+    <label>연락처</label>
+    <input id="tel" readonly>
 
-<label>보험상품:</label>
-<select id="productSelect"></select><br><br>
+    <hr>
 
-<label>가입금액:</label><br>
-<input type="number" id="regPrice"><br><br>
+    <label>보험상품:</label>
+    <select id="productSelect"></select>
 
-<label>월 보험료:</label><br>
-<input type="number" id="monthPrice"><br><br>
+    <label>가입금액:</label>
+    <input type="number" id="regPrice">
 
-<label>담당자:</label>
-<select id="adminSelect"></select><br><br>
+    <label>월 보험료:</label>
+    <input type="number" id="monthPrice">
 
-<button onclick="addContract()">가입</button>
+    <label>담당자:</label>
+    <select id="adminSelect"></select>
 
-<hr>
+    <button onclick="addContract()">가입</button>
 
-<h3>고객 보험 계약현황</h3>
+    <hr>
 
-<table border="1" id="contract-table">
-    <thead>
-    <tr>
-        <th>상품명</th>
-        <th>가입금액</th>
-        <th>월보험료</th>
-        <th>담당자</th>
-        <th>가입일</th>
-        <th>삭제</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <h3>고객 보험 계약현황</h3>
+
+    <table id="contract-table">
+        <thead>
+        <tr>
+            <th>상품명</th>
+            <th>가입금액</th>
+            <th>월보험료</th>
+            <th>담당자</th>
+            <th>가입일</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
 
 <script>
     let currentCustomerCode = "";
@@ -67,12 +142,11 @@
         fetch("/contract/customers")
             .then(res => res.json())
             .then(list => {
-                const customerSelect = document.getElementById("customerSelect");
-                customerSelect.innerHTML = "";
+                const select = document.getElementById("customerSelect");
+                select.innerHTML = "";
                 list.forEach(name => {
-                    customerSelect.innerHTML += `<option>${name}</option>`;
+                    select.innerHTML += `<option>${name}</option>`;
                 });
-
                 loadCustomerInfo();
             });
     }
@@ -88,7 +162,6 @@
                 document.getElementById("tel").value = c.tel;
 
                 currentCustomerCode = c.code;
-
                 loadContractList();
             });
     }
@@ -97,10 +170,10 @@
         fetch("/contract/products")
             .then(res => res.json())
             .then(list => {
-                const productSelect = document.getElementById("productSelect");
-                productSelect.innerHTML = "";
+                const select = document.getElementById("productSelect");
+                select.innerHTML = "";
                 list.forEach(p => {
-                    productSelect.innerHTML += `<option>${p}</option>`;
+                    select.innerHTML += `<option>${p}</option>`;
                 });
             });
     }
@@ -109,10 +182,10 @@
         fetch("/contract/admins")
             .then(res => res.json())
             .then(list => {
-                const adminSelect = document.getElementById("adminSelect");
-                adminSelect.innerHTML = "";
+                const select = document.getElementById("adminSelect");
+                select.innerHTML = "";
                 list.forEach(a => {
-                    adminSelect.innerHTML += `<option>${a}</option>`;
+                    select.innerHTML += `<option>${a}</option>`;
                 });
             });
     }
@@ -132,12 +205,7 @@
                             <td>${c.monthPrice}</td>
                             <td>${c.adminName}</td>
                             <td>${c.regDate}</td>
-
-                            <td>
-                                <button onclick='deleteContract(${JSON.stringify(c)})'>
-                                    삭제
-                                </button>
-                            </td>
+                            <td><button onclick='deleteContract(${JSON.stringify(c)})'>삭제</button></td>
                         </tr>
                     `;
                 });
@@ -164,13 +232,12 @@
                     alert("가입 완료!");
                     loadContractList();
                 } else {
-                    alert("가입 실패!");
+                    alert("가입 실패");
                 }
             });
     }
 
     function deleteContract(c) {
-
         if (!confirm("삭제하시겠습니까?")) return;
 
         const params = new URLSearchParams();

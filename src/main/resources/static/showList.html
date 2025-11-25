@@ -4,39 +4,87 @@
     <meta charset="UTF-8">
     <title>고객 조회</title>
     <style>
+        body {
+            display: flex;
+            justify-content: center;  /* 수평 중앙 */
+            align-items: flex-start;  /* 세로는 위쪽 정렬 */
+            min-height: 100vh;
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 800px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
         tr.selected {
             background-color: #d0e7ff;
+        }
+
+        #customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        #customer-table th, #customer-table td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        #customer-table th {
+            background: #e0e0e0;
+        }
+
+        #customer-table tr:hover {
+            background: #f0f8ff;
+            cursor: pointer;
+        }
+
+        .top-buttons {
+            margin-bottom: 15px;
+        }
+
+        .top-buttons button {
+            margin-right: 8px;
         }
     </style>
 </head>
 <body>
 
-<h2>고객 조회</h2>
+<div class="container">
 
-<div style="margin-bottom: 15px;">
-    <input type="text" id="searchName" placeholder="이름 검색" />
-    <button onclick="searchCustomers()">조회</button>
-    <button onclick="loadCustomers()">전체조회</button>
-    <button onclick="openEdit()" id="editBtn" disabled>수정</button>
-    <button onclick="deleteCustomer()" id="deleteBtn" disabled>삭제</button>
-    <button onclick="window.close()">닫기</button>
+    <h2>고객 조회</h2>
+
+    <div class="top-buttons">
+        <input type="text" id="searchName" placeholder="이름 검색" />
+        <button onclick="searchCustomers()">조회</button>
+        <button onclick="loadCustomers()">전체조회</button>
+        <button onclick="openEdit()" id="editBtn" disabled>수정</button>
+        <button onclick="deleteCustomer()" id="deleteBtn" disabled>삭제</button>
+        <button onclick="window.close()">닫기</button>
+    </div>
+
+    <table border="1" id="customer-table">
+        <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Birth</th>
+            <th>Tel</th>
+            <th>Address</th>
+            <th>Company</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
 </div>
-
-<table border="1" id="customer-table">
-    <thead>
-    <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>Birth</th>
-        <th>Tel</th>
-        <th>Address</th>
-        <th>Company</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<br>
 
 <script>
     let selectedCustomer = null;

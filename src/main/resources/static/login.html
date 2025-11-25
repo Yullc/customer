@@ -3,29 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <title>로그인</title>
+
   <style>
     body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f3f4f6;
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 50px;
     }
-    .box {
-      width: 300px;
+
+    .login-card {
+      width: 400px;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
     }
+
+    input {
+      width: 80%;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    button {
+      width: 85%;
+      background: #4f7dcf;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background: #3b6abc;
+    }
+
     #msg {
       color: red;
+      margin-top: 15px;
     }
   </style>
 </head>
+
 <body>
 
-<h2>로그인</h2>
+<div class="login-card">
+  <h2>로그인</h2>
 
-<div class="box">
-  <label>이름:</label><br>
-  <input type="text" id="name"><br><br>
+  <label>이름</label>
+  <input type="text" id="name">
 
-  <label>비밀번호:</label><br>
-  <input type="password" id="passwd"><br><br>
+  <label>비밀번호</label>
+  <input type="password" id="passwd">
 
   <button onclick="doLogin()">로그인</button>
 
@@ -39,25 +80,19 @@
 
     fetch("/user/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        passwd: passwd
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, passwd })
     })
             .then(res => res.json())
             .then(success => {
-              if (success === true) {
+              if (success) {
                 alert("로그인 성공!");
                 window.location.href = "/showList.html";
               } else {
-                document.getElementById("msg").textContent = "로그인 실패! 이름 또는 비밀번호를 확인하세요.";
+                document.getElementById("msg").textContent = "로그인 실패!";
               }
             })
-            .catch(err => {
-              console.error("에러:", err);
+            .catch(() => {
               document.getElementById("msg").textContent = "서버 오류 발생!";
             });
   }
